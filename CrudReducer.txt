@@ -1,0 +1,32 @@
+import { crudgridActionTypes, crudgridActions } from "../actions/crud";
+
+const initialState = {
+    serviceURL: '',
+    sortField: '',
+    sortDirection: '',
+    currentPage: 1,
+    lastPage: null,
+    recordsPerPage: null,
+    deleting: null,
+    recorsTotal: null,
+    elements: [],
+    loading: false
+};
+
+export const crudReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case crudgridActionTypes.CRUDGRID_INIT:
+            return { ...initialState, ...action.payload };
+        case crudgridActionTypes.CRUDGRID_SORT_CHANGE:
+        case crudgridActionTypes.CRUDGRID_LOADING:
+        case crudgridActionTypes.CRUDGRID_LOADED:
+        case crudgridActionTypes.CRUDGRID_PAGINATION_CHANGE:
+        case crudgridActionTypes.CRUDGRID_DELETING:
+        case crudgridActionTypes.CRUDGRID_DELETED:
+        case crudgridActionTypes.CRUDGRID_MARKTODELETE:
+        case crudgridActionTypes.CRUDGRID_CANCELDELETE:
+            return { ...state, ...action.payload };
+        default:
+            return state;
+    }
+};

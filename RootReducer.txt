@@ -1,0 +1,15 @@
+import { crudReducer } from "./crud";
+import { channelsListReducer } from "./channelslist";
+import { criteriaFormReducer } from "./criteriaform";
+import { createForms, combineForms } from 'react-redux-form';
+import {zoneFormReducer} from "./zonesform";
+import {countriesFormReducer} from "./countriesform";
+import {brandsFormReducer} from "./brandsform";
+import {branchesFormReducer} from "./branchesform";
+import {newBranchesFormReducer} from "./newbranchesform";
+import {categoriesFormReducer} from "./categoriesform";
+import {channelsFormReducer} from "./channelsform";
+
+export const rootReducer = combineForms({
+    crud: crudReducer
+});

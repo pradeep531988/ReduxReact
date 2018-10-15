@@ -356,3 +356,26 @@ mapDispatchToProps connects Redux actions to React props. This way a connected c
 Otherwise you’ll get TypeError: dispatch is not a function.
 
 npm i uuid --save-dev
+
+43. Redux Thunk middleware allows you to write action creators that return a function instead of an action.
+ The thunk can be used to delay the dispatch of an action, or to dispatch only if a certain condition is met. 
+ The inner function receives the store methods dispatch and getState as parameters.
+ 
+ store.dispatch(
+  makeASandwichWithSecretSauce('My wife')
+).then(() => {
+  console.log('Done!');
+});
+
+dispatch is used to call actions. It can be used with actions.
+
+import { Control, Form as ReduxForm} from 'react-redux-form';
+
+dispatch(testFormAction.save({saveServiceURL: WebApi.getURL('test'), data: data, test: ownProps.history})); //Call action from form
+
+44. Use import { Control, Form as ReduxForm} from 'react-redux-form';
+
+45. import { Button, Card, Form,Dimmer, Alert } from 'tabler-react';
+
+
+

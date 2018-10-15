@@ -1,0 +1,107 @@
+import WebApi from "../WebApi";
+import {channelsListActions} from "./channelslist";
+
+export const crudgridActionTypes = {
+    CRUDGRID_INIT: 'CRUDGRID_INIT',
+    CRUDGRID_LOADING: 'CRUDGRID_LOADING',
+    CRUDGRID_LOADED: 'CRUDGRID_LOADED',
+    CRUDGRID_SORT_CHANGE: 'CRUDGRID_SORT_CHANGE',
+    CRUDGRID_PAGINATION_CHANGE: 'CRUDGRID_PAGINATION_CHANGE',
+    CRUDGRID_DELETING: 'CRUDGRID_DELETING',
+    CRUDGRID_DELETED: 'CRUDGRID_DELETED',
+    CRUDGRID_MARKTODELETE: 'CRUDGRID_MARKTODELETE',
+    CRUDGRID_CANCELDELETE: 'CRUDGRID_CANCELDELETE'
+};
+
+export const crudgridActions = {
+    init: (payload) => {
+        return {
+            type: crudgridActionTypes.CRUDGRID_INIT,
+            payload: payload
+        };
+    },
+    fetch: function(payload) {
+        return (dispatch, getState) => {
+            const { currentPage, sortField, sortDirection } = getState().crud;
+
+            dispatch(crudgridActions.loading());
+            return WebApi.fetchURL(
+                payload.serviceURL + '?' + $.param({page: currentPage, sortField: sortField, sortDirection: sortDirection}),
+                (data) => {
+                    const params = {
+                        elements: data.data,
+                        currentPage: data.current_page,
+                        lastPage: data.last_page,
+                        recordsPerPage: data.per_page,
+                        recorsTotal: data.total
+                    };
+                    dispatch(crudgridActions.loaded({ ...payload, ...params }));
+                }
+            );
+        };
+    },
+    loading: () => {
+        return {
+            type: crudgridActionTypes.CRUDGRID_LOADING,
+            payload: { loading: true }
+        };
+    },
+    loaded: (payload) => {
+        return {
+            type: crudgridActionTypes.CRUDGRID_LOADED,
+            payload: { ...payload, loading: false }
+        };
+    },
+    sortChange: (payload) => {
+        return {
+            type: crudgridActionTypes.CRUDGRID_SORT_CHANGE,
+            payload: payload
+        };
+    },
+    paginationChange: (payload) => {
+        return {
+            type: crudgridActionTypes.CRUDGRID_PAGINATION_CHANGE,
+            payload: payload
+        };
+    },
+    markToDelete: function(id) {
+        return {
+            type: crudgridActionTypes.CRUDGRID_MARKTODELETE,
+            payload: {deletingId: id}
+        };
+    },
+    cancelDelete: function() {
+        return {
+            type: crudgridActionTypes.CRUDGRID_MARKTODELETE,
+            payload: {deletingId: null}
+        };
+    },
+    delete: function(payload) {
+        return (dispatch) => {
+            dispatch(crudgridActions.deleting(payload));
+            return WebApi.postURL(
+                payload.deleteServiceURL,
+                { body: payload.data },
+                (data, status) => {
+                    if(status === 200) {
+                        dispatch(crudgridActions.fetch({...payload, reload: true}));
+                        dispatch(crudgridActions.deleted({ ...payload, data: data.data }));
+                    }
+                }
+            );
+        };
+    },
+    deleting: (payload) => {
+        return {
+            type: crudgridActionTypes.CRUDGRID_DELETING,
+            payload: { ...payload, deleting: true }
+        };
+    },
+    deleted: (payload) => {
+        return {
+            type: crudgridActionTypes.CRUDGRID_DELETED,
+            payload: { ...payload, deleting: false }
+        };
+    },
+};
+
